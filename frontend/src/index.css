@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  /* Dim white background to reduce eye pressure */
+  --color-bg-primary: #F4F7F9;
+  
+  /* Content in light/cool blue tones */
+  --color-text-primary: #0C4A6E; /* Dark sky blue for readable text */
+  --color-text-muted: #64748B; /* Muted slate for secondary text */
+  --color-accent: #0EA5E9; /* Vibrant light blue for highlights/buttons */
+  --color-accent-secondary: #0284C7; /* Slightly darker light blue for hover */
+  --color-border: #E0F2FE; /* Very light blue for borders */
+}
+
+@layer base {
+  :root {
+    --font-heading: 'Outfit', sans-serif;
+    --font-sans: 'Inter', sans-serif;
+  }
+
+  body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
