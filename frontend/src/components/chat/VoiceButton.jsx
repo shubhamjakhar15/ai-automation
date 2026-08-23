@@ -31,7 +31,6 @@ const VoiceButton = ({ onTextReceived, disabled }) => {
       const text =
         event.results[0][0].transcript;
 
-      console.log("User said:", text);
 
       onTextReceived(text);
     };

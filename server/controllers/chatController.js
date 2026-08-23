@@ -66,7 +66,7 @@ const chatWithAI = async (req, res) => {
       await chatMeta.save();
     }
 
-    console.log(`User question [${chatId}]:`, message);
+
 
     const [globalResults, chatResults, memoryResults] =
       await Promise.all([
@@ -93,7 +93,7 @@ ${memoryContext || "None"}
 ${chatContext || "None"}
 `;
 
-    console.log("Full Context sent to Gemini:", fullContext);
+
 
     const prompt = `
 You are a helpful AI assistant for our web development course platform.
@@ -126,7 +126,7 @@ Answer:
 
     const answer = response.text;
 
-    console.log("AI answer:", answer);
+
 
     await addMessageToChat(
       chatId,

@@ -13,8 +13,9 @@ connectDB();
 
 const app = express();
 
+const frontendUrl = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, "") : "http://localhost:5173";
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin: [frontendUrl, "https://the-ai-automation.netlify.app", "http://localhost:5173"],
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 app.use(cors(corsOptions));
@@ -22,22 +23,12 @@ app.use(express.json());
 
 
 app.use((req, res, next) => {
-  console.log(
-    "AUTHORIZATION HEADER:",
-    req.headers.authorization
-      ? "Bearer token received"
-      : "NO AUTHORIZATION HEADER"
-  );
-  
   next();
 });
 
 app.use(clerkMiddleware());
 
 app.use((req, res, next) => {
-  console.log("========== CLERK DEBUG ==========");
-  console.log("Authorization Header:", req.headers.authorization ? "PRESENT" : "MISSING");
-  console.log("User ID:", req.auth?.userId || "NOT AUTHENTICATED");
   next();
 });
 

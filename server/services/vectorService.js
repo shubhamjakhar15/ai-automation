@@ -49,9 +49,7 @@ const vectorSearch = async (query, topK = 5) => {
     includeMetadata: true,
   });
 
-  console.log("\n========== VECTOR SEARCH ==========");
-  console.log("Query:", query);
-  
+
   // Pinecone returns a similarity score (higher is better, usually cosine similarity 0-1)
   const MIN_SCORE = 0.5;
 
@@ -63,7 +61,7 @@ const vectorSearch = async (query, topK = 5) => {
       score: match.score,
     }));
 
-  console.log("Vector results:", filteredResults.length);
+
   return filteredResults;
 };
 

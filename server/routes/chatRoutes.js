@@ -10,12 +10,6 @@ const router = express.Router();
 const requireAuth = (req, res, next) => {
   const auth = getAuth(req);
 
-  console.log("========== CLERK AUTH ==========");
-  console.log("isAuthenticated:", auth.isAuthenticated);
-  console.log("userId:", auth.userId);
-  console.log("sessionId:", auth.sessionId);
-  console.log("================================");
-
   if (!auth?.userId) {
     return res.status(401).json({
       success: false,

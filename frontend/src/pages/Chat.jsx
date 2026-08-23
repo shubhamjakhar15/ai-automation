@@ -198,13 +198,6 @@ export default function Chat() {
     try {
       const token = await getToken();
 
-      console.log("SIGNED IN:", isSignedIn);
-console.log("TOKEN EXISTS:", !!token);
-console.log(
-  "TOKEN PREVIEW:",
-  token ? token.substring(0, 30) + "..." : "NO TOKEN"
-);
-
 
 
       if (!token) {
@@ -225,10 +218,6 @@ console.log(
         }
       );
 
-      console.log(
-        "FULL BACKEND RESPONSE:",
-        response.data
-      );
 
       // Check if chat limit reached
       if (response.data.limitReached) {

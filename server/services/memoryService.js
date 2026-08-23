@@ -95,7 +95,7 @@ const summarizeAndStore = async (chatId, userId) => {
       metadata: { source_chat: chatId, userId, text: summary, timestamp: new Date().toISOString() }
     }] });
     
-    console.log(`Stored summary for chat ${chatId} in master memory.`);
+
     return summary;
   } catch (error) {
     console.error("Error summarizing chat:", error);
