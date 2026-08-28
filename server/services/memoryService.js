@@ -6,8 +6,9 @@ const ChatMeta = require("../models/ChatMeta");
 
 const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 const indexName = process.env.PINECONE_INDEX_NAME || "voice-chatbot";
+const indexHost = process.env.PINECONE_HOST || "https://voice-chatbot-89i442y.svc.aped-4627-b74a.pinecone.io";
 
-const getIndex = () => pc.index(indexName);
+const getIndex = () => pc.index(indexName, indexHost);
 
 const addMessageToChat = async (chatId, text, sender, messageIndex) => {
   const index = getIndex().namespace("chat_history");

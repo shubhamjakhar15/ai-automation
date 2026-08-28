@@ -1,5 +1,7 @@
-const fs = require("fs");
 const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "../.env") });
+require("dotenv").config();
+const fs = require("fs");
 
 const { addDocuments } = require("../services/vectorService");
 
@@ -15,7 +17,7 @@ const loadKnowledge = () => {
   );
 
   return text
-    .split(/\r?\n/)
+    .split(/\r?\n\s*\r?\n+/)
     .map((chunk) => chunk.trim())
     .filter((chunk) => chunk.length > 0);
 };
