@@ -13,6 +13,7 @@ import ChatInput from "../components/chat/ChatInput";
 import ChatBox from "../components/chat/ChatBox";
 import Sidebar from "../components/chat/Sidebar";
 import KnowledgeUpload from "../components/admin/KnowledgeUpload";
+import { cleanTextForSpeech, getBestVoice, splitIntoSentences } from "../utils/speechHelper";
 import { Database, X } from "lucide-react";
 import "./Chat.css";
 
@@ -28,6 +29,7 @@ export default function Chat() {
   const [limitReached, setLimitReached] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [chatToDelete, setChatToDelete] = useState(null);
+  const [currentlySpeakingIndex, setCurrentlySpeakingIndex] = useState(null);
   const isAdmin = user?.publicMetadata?.role === 'admin';
 
   // --------------------------------
@@ -149,33 +151,89 @@ export default function Chat() {
     }
   };
 
+  // Pre-load voices on mount
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.getVoices();
+      const handleVoicesChanged = () => {
+        window.speechSynthesis.getVoices();
+      };
+      window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
+      return () => {
+        window.speechSynthesis.cancel();
+      };
+    }
+  }, []);
+
   // --------------------------------
-  // TEXT TO SPEECH
+  // TEXT TO SPEECH (NATURAL & FLUENT)
   // --------------------------------
 
-  const speakResponse = (text) => {
-    if (!window.speechSynthesis) return;
+  const stopSpeaking = useCallback(() => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    setCurrentlySpeakingIndex(null);
+  }, []);
 
-    window.speechSynthesis.cancel();
+  const speakResponse = useCallback((text, messageIndex = null) => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    // Toggle off if clicking the already speaking message
+    if (messageIndex !== null && currentlySpeakingIndex === messageIndex) {
+      stopSpeaking();
+      return;
+    }
 
-    utterance.lang = "en-IN";
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
-    utterance.volume = 1;
+    stopSpeaking();
 
-    utterance.onstart = () => {
+    const cleanText = cleanTextForSpeech(text);
+    if (!cleanText) return;
+
+    const sentences = splitIntoSentences(cleanText);
+    if (sentences.length === 0) return;
+
+    const voice = getBestVoice();
+    setCurrentlySpeakingIndex(messageIndex);
+
+    let currentIndex = 0;
+
+    const speakNext = () => {
+      if (currentIndex >= sentences.length) {
+        setCurrentlySpeakingIndex(null);
+        return;
+      }
+
+      const sentence = sentences[currentIndex];
+      currentIndex++;
+
+      const utterance = new SpeechSynthesisUtterance(sentence);
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang || "en-IN";
+      } else {
+        utterance.lang = "en-IN";
+      }
+
+      // Natural conversational cadence and pitch
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+
+      utterance.onend = () => {
+        speakNext();
+      };
+
+      utterance.onerror = (e) => {
+        console.warn("Speech synthesis error:", e);
+        setCurrentlySpeakingIndex(null);
+      };
+
+      window.speechSynthesis.speak(utterance);
     };
 
-    utterance.onend = () => {
-    };
-
-    utterance.onerror = () => {
-    };
-
-    window.speechSynthesis.speak(utterance);
-  };
+    speakNext();
+  }, [currentlySpeakingIndex, stopSpeaking]);
 
   // --------------------------------
   // SEND MESSAGE
@@ -183,6 +241,8 @@ export default function Chat() {
 
   const sendMessage = async (text) => {
     if (!text.trim() || loading || limitReached) return;
+
+    stopSpeaking();
 
     // Show user's message immediately
     setMessages((prev) => [
@@ -197,8 +257,6 @@ export default function Chat() {
 
     try {
       const token = await getToken();
-
-
 
       if (!token) {
         throw new Error("Authentication token not available");
@@ -218,7 +276,6 @@ export default function Chat() {
         }
       );
 
-
       // Check if chat limit reached
       if (response.data.limitReached) {
         setLimitReached(true);
@@ -228,17 +285,22 @@ export default function Chat() {
         response.data.answer ||
         "I could not generate a response.";
 
-      // Add AI response
-      setMessages((prev) => [
-        ...prev,
-        {
-          sender: "ai",
-          text: reply,
-        },
-      ]);
+      let aiMsgIndex = 0;
 
-      // Speak AI response
-      speakResponse(reply);
+      // Add AI response
+      setMessages((prev) => {
+        aiMsgIndex = prev.length;
+        return [
+          ...prev,
+          {
+            sender: "ai",
+            text: reply,
+          },
+        ];
+      });
+
+      // Speak AI response with natural voice
+      speakResponse(reply, aiMsgIndex);
 
       // If this was a new chat, save generated chat ID
       if (!currentChatId) {
@@ -325,8 +387,8 @@ export default function Chat() {
               </div>
 
               <div>
-                <h2>AskAI</h2>
-                <span>AI Assistant</span>
+                <h2>Sunrise Public School</h2>
+                <span>Front Desk Receptionist</span>
               </div>
 
             </div>
@@ -375,15 +437,15 @@ export default function Chat() {
               </div>
 
               <h1>
-                How can I
+                Welcome to
                 <br />
-                <span>help you?</span>
+                <span>School Reception</span>
               </h1>
 
               <p className="subtitle">
-                Ask anything. Speak naturally.
+                Hello! How can I assist you today?
                 <br />
-                I'm here to help.
+                Ask about school timings, admissions, fees, transport, or facilities.
               </p>
 
               {/* Quick actions */}
@@ -394,22 +456,22 @@ export default function Chat() {
                   className="action-card"
                   onClick={() =>
                     sendMessage(
-                      "Tell me something interesting"
+                      "What are the regular school and library timings?"
                     )
                   }
                 >
 
                   <div className="action-icon purple">
-                    ✦
+                    ⏰
                   </div>
 
                   <div>
                     <strong>
-                      Ask anything
+                      School Timings
                     </strong>
 
                     <span>
-                      Get an answer
+                      Daily & Saturday hours
                     </span>
                   </div>
 
@@ -419,22 +481,22 @@ export default function Chat() {
                   className="action-card"
                   onClick={() =>
                     sendMessage(
-                      "Explain this topic simply"
+                      "Tell me about admission requirements and annual fee structure."
                     )
                   }
                 >
 
                   <div className="action-icon pink">
-                    ◎
+                    📋
                   </div>
 
                   <div>
                     <strong>
-                      Learn something
+                      Admissions & Fees
                     </strong>
 
                     <span>
-                      Understand better
+                      Classes 1 to 12 details
                     </span>
                   </div>
 
@@ -444,22 +506,22 @@ export default function Chat() {
                   className="action-card"
                   onClick={() =>
                     sendMessage(
-                      "Give me a creative idea"
+                      "What sports, computer lab, and library facilities are available?"
                     )
                   }
                 >
 
                   <div className="action-icon blue">
-                    ✧
+                    🏫
                   </div>
 
                   <div>
                     <strong>
-                      Get creative
+                      School Facilities
                     </strong>
 
                     <span>
-                      Generate ideas
+                      Sports, labs & library
                     </span>
                   </div>
 
@@ -469,22 +531,22 @@ export default function Chat() {
                   className="action-card"
                   onClick={() =>
                     sendMessage(
-                      "Search my knowledge base"
+                      "How can parents contact the school office or principal?"
                     )
                   }
                 >
 
                   <div className="action-icon violet">
-                    ⌕
+                    📞
                   </div>
 
                   <div>
                     <strong>
-                      Search knowledge
+                      Contact Office
                     </strong>
 
                     <span>
-                      Find information
+                      Hours & emergency phone
                     </span>
                   </div>
 
@@ -502,7 +564,12 @@ export default function Chat() {
 
           {messages.length > 0 && (
             <section className="conversation" style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', width: 'min(100%, 760px)', margin: '25px auto 10px' }}>
-              <ChatBox messages={messages} loading={loading} />
+              <ChatBox
+                messages={messages}
+                loading={loading}
+                onSpeakMessage={speakResponse}
+                currentlySpeakingIndex={currentlySpeakingIndex}
+              />
             </section>
           )}
 

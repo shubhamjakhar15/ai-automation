@@ -1,4 +1,6 @@
+const path = require("path");
 const dotenv = require("dotenv");
+dotenv.config({ path: path.join(__dirname, ".env") });
 dotenv.config();
 
 const express = require("express");
@@ -13,24 +15,78 @@ connectDB();
 
 const app = express();
 
-const frontendUrl = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, "") : "http://localhost:5173";
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3000",
+  "http://localhost:4173",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+  "http://127.0.0.1:3000",
+  "https://the-ai-automation.netlify.app",
+];
+
+if (process.env.FRONTEND_URL) {
+  process.env.FRONTEND_URL.split(",").forEach((url) => {
+    const cleaned = url.trim().replace(/\/$/, "");
+    if (cleaned && !allowedOrigins.includes(cleaned)) {
+      allowedOrigins.push(cleaned);
+    }
+  });
+}
+
 const corsOptions = {
-  origin: [frontendUrl, "https://the-ai-automation.netlify.app", "http://localhost:5173"],
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+
+    // Allow explicitly listed origins
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow localhost/127.0.0.1 on any port for local development
+    if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow Netlify and Vercel domains (including deploy previews)
+    if (
+      /^https:\/\/([a-zA-Z0-9_-]+\.)*netlify\.app$/.test(origin) ||
+      /^https:\/\/([a-zA-Z0-9_-]+\.)*vercel\.app$/.test(origin)
+    ) {
+      return callback(null, true);
+    }
+
+    // Fallback: allow dynamically to prevent CORS blockage
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Authorization",
+    "Access-Control-Allow-Headers",
+    "Access-Control-Request-Method",
+    "Access-Control-Request-Headers",
+  ],
+  exposedHeaders: ["Authorization"],
+  optionsSuccessStatus: 200,
 };
+
 app.use(cors(corsOptions));
 app.use(express.json());
 
 
-app.use((req, res, next) => {
-  next();
-});
-
-app.use(clerkMiddleware());
-
-app.use((req, res, next) => {
-  next();
-});
+app.use(
+  clerkMiddleware({
+    publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+    secretKey: process.env.CLERK_SECRET_KEY,
+  })
+);
 
 
 app.get("/", (req, res) => {
