@@ -13,7 +13,7 @@ import VisionSection from "./VisionSection";
 import WorkExplorations from "./WorkExplorations";
 import DesignInMotion from "./DesignInMotion";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 /* ============================================================
    DESIGN TOKENS — Light Mode with Soft Blue Accents
@@ -306,6 +306,7 @@ function Navbar() {
   const { dir, scrolled } = useScrollMeta();
   const [open, setOpen] = useState(false);
   const { user } = useUser();
+  const navigate = useNavigate();
   const links = ["Product", "Industries", "How it works", "Pricing", "FAQ"];
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-500 ease-out ${dir === "down" && scrolled ? "-translate-y-full" : "translate-y-0"}`}>
@@ -319,7 +320,35 @@ function Navbar() {
           </div>
           <div className="hidden md:flex items-center gap-8">
             {links.map((l) => (
-              <a key={l} href="#" data-hover className="ar-underline text-sm font-medium" style={{ color: "var(--text2)" }}>{l}</a>
+              <a 
+                key={l} 
+                href={
+                  l === "Product" ? "#work-explorations" :
+                  l === "FAQ" ? "#faq-section" :
+                  l === "Pricing" ? "#pricing-section" :
+                  l === "How it works" ? "/how-it-works" : "#"
+                } 
+                onClick={(e) => {
+                  if (l === "Product") {
+                    e.preventDefault();
+                    document.getElementById("work-explorations")?.scrollIntoView({ behavior: "smooth" });
+                  } else if (l === "FAQ") {
+                    e.preventDefault();
+                    document.getElementById("faq-section")?.scrollIntoView({ behavior: "smooth" });
+                  } else if (l === "Pricing") {
+                    e.preventDefault();
+                    document.getElementById("pricing-section")?.scrollIntoView({ behavior: "smooth" });
+                  } else if (l === "How it works") {
+                    e.preventDefault();
+                    navigate("/how-it-works");
+                  }
+                }}
+                data-hover 
+                className="ar-underline text-sm font-medium" 
+                style={{ color: "var(--text2)" }}
+              >
+                {l}
+              </a>
             ))}
           </div>
           <div className="hidden md:flex items-center gap-3">
@@ -337,7 +366,7 @@ function Navbar() {
                 <UserButton />
               )}
             </SignedIn>
-            <Link to="/signup">
+            <Link to="/custom-ai-trial">
               <Ripple className="ar-btn-primary text-sm font-medium px-4 py-2 rounded-lg">
                 <span data-hover>Start Free Trial</span>
               </Ripple>
@@ -349,8 +378,43 @@ function Navbar() {
         </div>
         {open && (
           <div className="ar-glass md:hidden mt-2 rounded-2xl p-5 flex flex-col gap-4">
-            {links.map((l) => <a key={l} href="#" className="text-sm font-medium" style={{ color: "var(--text2)" }}>{l}</a>)}
-            <Ripple className="ar-btn-primary text-sm font-medium px-4 py-2 rounded-lg text-center">Start Free Trial</Ripple>
+            {links.map((l) => (
+              <a 
+                key={l} 
+                href={
+                  l === "Product" ? "#work-explorations" :
+                  l === "FAQ" ? "#faq-section" : 
+                  l === "Pricing" ? "#pricing-section" :
+                  l === "How it works" ? "/how-it-works" : "#"
+                } 
+                onClick={(e) => {
+                  if (l === "Product") {
+                    e.preventDefault();
+                    document.getElementById("work-explorations")?.scrollIntoView({ behavior: "smooth" });
+                    setOpen(false);
+                  } else if (l === "FAQ") {
+                    e.preventDefault();
+                    document.getElementById("faq-section")?.scrollIntoView({ behavior: "smooth" });
+                    setOpen(false);
+                  } else if (l === "Pricing") {
+                    e.preventDefault();
+                    document.getElementById("pricing-section")?.scrollIntoView({ behavior: "smooth" });
+                    setOpen(false);
+                  } else if (l === "How it works") {
+                    e.preventDefault();
+                    navigate("/how-it-works");
+                    setOpen(false);
+                  }
+                }}
+                className="text-sm font-medium" 
+                style={{ color: "var(--text2)" }}
+              >
+                {l}
+              </a>
+            ))}
+            <Link to="/custom-ai-trial">
+              <Ripple className="ar-btn-primary text-sm font-medium px-4 py-2 rounded-lg text-center">Start Free Trial</Ripple>
+            </Link>
           </div>
         )}
       </div>
@@ -472,9 +536,11 @@ function Hero() {
             Your AI receptionist answers calls, books appointments, manages calendars, and works 24/7 — so you never lose business to a missed call again.
           </p>
           <div className="flex flex-wrap items-center gap-4 mb-10">
-            <Ripple className="ar-btn-primary rounded-xl px-6 py-3.5 font-medium text-sm flex items-center gap-2">
-              <span data-hover className="flex items-center gap-2">Start Free Trial <ArrowRight size={15} /></span>
-            </Ripple>
+            <Link to="/custom-ai-trial">
+              <Ripple className="ar-btn-primary rounded-xl px-6 py-3.5 font-medium text-sm flex items-center gap-2">
+                <span data-hover className="flex items-center gap-2">Start Free Trial <ArrowRight size={15} /></span>
+              </Ripple>
+            </Link>
             <Ripple className="ar-btn-ghost rounded-xl px-6 py-3.5 font-medium text-sm">
               <span data-hover>Book a Demo</span>
             </Ripple>
@@ -860,7 +926,7 @@ function PricingPreview() {
     { name: "Enterprise", price: "Custom", desc: "For multi-location and franchise operations.", features: ["Unlimited calls", "Dedicated onboarding", "Custom voice & routing", "SLA & phone support"] },
   ];
   return (
-    <section className="py-28 px-6 md:px-10" style={{ background: "var(--bg2)" }}>
+    <section id="pricing-section" className="py-28 px-6 md:px-10" style={{ background: "var(--bg2)" }}>
       <div className="mx-auto max-w-6xl">
         <SectionHeading eyebrow="Pricing" title="Simple plans, real ROI." desc="One missed call can cost more than a month of ReceptioAI. Pick the plan that matches your call volume." />
         <div className="grid md:grid-cols-3 gap-6 mt-14 items-stretch">
@@ -897,7 +963,7 @@ function FAQ() {
   ];
   const [openIdx, setOpenIdx] = useState(0);
   return (
-    <section className="py-28 px-6 md:px-10">
+    <section id="faq-section" className="py-28 px-6 md:px-10">
       <div className="mx-auto max-w-3xl">
         <SectionHeading eyebrow="FAQ" title="Questions, answered." />
         <div className="mt-12 space-y-3">

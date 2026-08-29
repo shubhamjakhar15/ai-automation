@@ -17,6 +17,8 @@ import Signup from '../pages/Signup'
 import Dashboard from '../pages/Dashboard'
 import NotFound from '../pages/NotFound'
 import Chat from '../pages/Chat'
+import CustomAiTrial from '../pages/CustomAiTrial'
+import HowItWorks from '../pages/HowItWorks'
 
 export default function AppRoutes() {
     return (
@@ -34,6 +36,8 @@ export default function AppRoutes() {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/chat" element={<Chat />} />
+                <Route path="/custom-ai-trial" element={<CustomAiTrial />} />
+                <Route path="/how-it-works" element={<HowItWorks />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
             {/* <Footer /> */}

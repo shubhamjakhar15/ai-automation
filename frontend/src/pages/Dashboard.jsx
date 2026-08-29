@@ -74,7 +74,7 @@ export default function Dashboard() {
 
   const menuItems = [
     { id: 'profile', label: 'User Profile', icon: <User size={18} /> },
-    { id: 'overview', label: 'Dashboard Overview', icon: <Activity size={18} /> },
+
     { id: 'billing', label: 'Billing & Plan', icon: <CreditCard size={18} /> },
     { id: 'settings', label: 'Settings', icon: <Settings size={18} /> },
   ];
@@ -258,62 +258,7 @@ export default function Dashboard() {
             </div>
           )}
 
-          {activeTab === 'overview' && (
-            <div className="space-y-6">
-               {/* STATS */}
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {[
-                    { label: "Total Calls Handled", val: "1,248", icon: <Phone size={18} />, color: T.accent2 },
-                    { label: "Appointments Booked", val: "342", icon: <Calendar size={18} />, color: T.success },
-                    { label: "Hours Saved", val: "124h", icon: <Clock size={18} />, color: "#F59E0B" }
-                  ].map((stat, i) => (
-                    <div key={i} className="p-6 rounded-2xl border shadow-sm flex items-start justify-between" style={{ background: T.card, borderColor: T.border }}>
-                       <div>
-                         <p className="text-sm font-medium mb-1" style={{ color: T.muted }}>{stat.label}</p>
-                         <h3 className="text-3xl font-bold">{stat.val}</h3>
-                       </div>
-                       <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-50" style={{ color: stat.color }}>
-                         {stat.icon}
-                       </div>
-                    </div>
-                  ))}
-               </div>
 
-               {/* RECENT ACTIVITY */}
-               <div className="rounded-2xl border shadow-sm overflow-hidden" style={{ background: T.card, borderColor: T.border }}>
-                  <div className="p-6 border-b flex items-center justify-between" style={{ borderColor: T.border }}>
-                    <h3 className="font-bold text-lg">Recent AI Activity</h3>
-                    <button className="text-sm font-medium hover:underline" style={{ color: T.accent2 }}>View All</button>
-                  </div>
-                  <div className="divide-y" style={{ borderColor: T.border }}>
-                     {[
-                       { type: "call", title: "Inbound Call from +1 (555) 0192", time: "10 mins ago", status: "Resolved" },
-                       { type: "booking", title: "New Appointment: Sarah Jenkins", time: "1 hour ago", status: "Confirmed" },
-                       { type: "call", title: "Inbound Call from +1 (555) 3341", time: "2 hours ago", status: "Voicemail" },
-                       { type: "booking", title: "New Appointment: Mike Ross", time: "5 hours ago", status: "Confirmed" }
-                     ].map((act, i) => (
-                       <div key={i} className="p-4 px-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                          <div className="flex items-center gap-4">
-                             <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: act.type === 'call' ? T.softBlue : 'rgba(16,185,129,0.1)' }}>
-                               {act.type === 'call' ? <Phone size={16} color={T.accent2} /> : <Calendar size={16} color={T.success} />}
-                             </div>
-                             <div>
-                               <p className="text-sm font-semibold">{act.title}</p>
-                               <p className="text-xs" style={{ color: T.muted }}>{act.time}</p>
-                             </div>
-                          </div>
-                          <span className="text-xs font-medium px-2.5 py-1 rounded-md" style={{ 
-                            background: act.status === 'Confirmed' || act.status === 'Resolved' ? 'rgba(16,185,129,0.1)' : '#F1F5F9',
-                            color: act.status === 'Confirmed' || act.status === 'Resolved' ? T.success : T.muted
-                          }}>
-                            {act.status}
-                          </span>
-                       </div>
-                     ))}
-                  </div>
-               </div>
-            </div>
-          )}
 
           {activeTab === 'admin' && isAdmin && (
             <div className="space-y-6">

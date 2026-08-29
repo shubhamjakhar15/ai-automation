@@ -17,7 +17,7 @@ export default function Signup() {
         </div>
 
         <div className="relative z-10 w-full flex justify-center">
-          <SignUp signInUrl="/login" />
+          <SignUp signInUrl="/login" forceRedirectUrl="/custom-ai-trial" fallbackRedirectUrl="/custom-ai-trial" />
         </div>
       </section>
     </PageTransition>
