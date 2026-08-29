@@ -74,7 +74,7 @@ export default function CustomAiTrial() {
   // --- FORM VIEW (When Signed In) ---
   if (isSignedIn) {
     return (
-      <div className="min-h-screen relative overflow-hidden bg-slate-50 text-slate-900 font-sans flex flex-col justify-center py-12">
+      <div className="min-h-screen relative overflow-hidden bg-slate-50 text-slate-900 font-sans flex flex-col justify-center pt-24 pb-12">
         <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
           <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-blue-200/40 blur-[120px]" />
           <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-sky-200/40 blur-[100px]" />
@@ -93,7 +93,7 @@ export default function CustomAiTrial() {
           </div>
         </nav>
 
-        <div className="relative z-10 mx-auto w-full max-w-5xl px-6 flex flex-col md:flex-row gap-12 items-center mt-8">
+        <div className="relative z-10 mx-auto w-full max-w-5xl px-6 flex flex-col md:flex-row gap-10 md:gap-12 items-center">
           <div className="flex-1 w-full text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 bg-blue-100/50 border border-blue-200/60 shadow-sm">
               <Sparkles size={14} className="text-blue-600" />
@@ -255,7 +255,7 @@ export default function CustomAiTrial() {
 
   // --- LANDING PAGE VIEW (When Not Signed In) ---
   return (
-    <div className="h-screen relative overflow-hidden bg-white text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-900 flex flex-col">
+    <div className="min-h-screen relative overflow-hidden bg-white text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-900 flex flex-col">
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-blue-100/50 blur-[100px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-sky-100/50 blur-[100px]" />
@@ -274,7 +274,7 @@ export default function CustomAiTrial() {
         </div>
       </nav>
 
-      <main className="relative z-10 mx-auto w-full max-w-7xl px-6 flex-1 flex items-center justify-center min-h-0">
+      <main className="relative z-10 mx-auto w-full max-w-7xl px-6 flex-1 flex items-center justify-center min-h-0 py-12 lg:py-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center w-full">
           <div className="flex flex-col justify-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 bg-blue-50 border border-blue-100/60 shadow-sm w-max">
