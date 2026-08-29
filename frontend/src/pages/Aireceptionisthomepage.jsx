@@ -307,7 +307,7 @@ function Navbar() {
   const [open, setOpen] = useState(false);
   const { user } = useUser();
   const navigate = useNavigate();
-  const links = ["Product", "Industries", "How it works", "Pricing", "FAQ"];
+  const links = ["Product", "How it works", "FAQ"];
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-500 ease-out ${dir === "down" && scrolled ? "-translate-y-full" : "translate-y-0"}`}>
       <div className={`mx-auto max-w-7xl px-6 md:px-10 transition-all duration-500 ${scrolled ? "mt-3" : "mt-6"}`}>
