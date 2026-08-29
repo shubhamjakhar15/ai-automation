@@ -2,34 +2,36 @@ import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { ArrowRight } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 // Register ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
 // Mock data replicating the projects shown in the video
 const projects = [
     {
-        title: "MyWorker AI",
-        subTitle: "AI platform simplifying hiring, management, and workforce scaling.",
-        image: "https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=1200&auto=format&fit=crop",
-        mainText: "Boost your workforce with AI digital workers",
+        title: "Open AI Chat",
+        subTitle: "AI-powered chatbot automating customer support and streamlining user inquiries instantly.",
+        image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1200&auto=format&fit=crop",
+        mainText: "Experience Instant Answers & Support",
+        link: "/chat"
     },
-    {
-        title: "Pulse Studio",
-        subTitle: "A motion-led studio website showcasing artists, projects, and culture.",
-        image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1200&auto=format&fit=crop",
-        mainText: "An Independent Music Studio Shaped by Sound",
-    },
-    {
-        title: "Loftloom",
-        subTitle: "Seamless real estate platform for effortless property discovery.",
-        image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1200&auto=format&fit=crop",
-        mainText: "LIVE LIFE IN LUXURY",
-    }
+    // {
+    //     title: "Pulse Studio",
+    //     subTitle: "A motion-led studio website showcasing artists, projects, and culture.",
+    //     image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1200&auto=format&fit=crop",
+    //     mainText: "An Independent Music Studio Shaped by Sound",
+    // },
+    // {
+    //     title: "Loftloom",
+    //     subTitle: "Seamless real estate platform for effortless property discovery.",
+    //     image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1200&auto=format&fit=crop",
+    //     mainText: "LIVE LIFE IN LUXURY",
+    // }
 ];
 
 export default function WorkExplorations() {
     const sectionRef = useRef(null);
+    const navigate = useNavigate();
     const trackRef = useRef(null);
     const cardsRef = useRef([]);
 
@@ -102,6 +104,7 @@ export default function WorkExplorations() {
     return (
         // Background uses the authentic linear gradient from the source
         <section
+            id="work-explorations"
             ref={sectionRef}
             className="relative w-full h-screen overflow-hidden bg-[linear-gradient(0deg,#D2D2D2_0%,#FFFFFF_100%)] text-[#1D1D1D] font-sans"
         >
@@ -138,7 +141,10 @@ export default function WorkExplorations() {
 
                         <div className="js-work-card-inner w-full px-8 md:px-20 will-change-transform">
                             {/* Inner Card Container */}
-                            <div className="relative flex flex-col w-full group cursor-pointer">
+                            <div
+                                className="relative flex flex-col w-full group cursor-pointer"
+                                onClick={() => project.link && navigate(project.link)}
+                            >
 
                                 {/* Image Wrapper */}
                                 <div className="relative w-full aspect-[4/3] overflow-hidden rounded-xl bg-gray-200">
